@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "payload.schema.json",
+  "title": "IngestPayload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["orderId", "amount", "currency"],
+  "properties": {
+    "orderId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{3,64}$",
+      "description": "Upstream-assigned identifier for the record being bridged."
+    },
+    "amount": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Monetary amount associated with the payload."
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "description": "ISO 4217 currency code."
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "Optional free-form string key/value metadata."
+    }
+  }
+}

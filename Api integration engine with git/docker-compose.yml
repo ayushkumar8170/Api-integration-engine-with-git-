@@ -1,0 +1,30 @@
+services:
+  integration-engine:
+    build:
+      context: ./src/IntegrationEngine
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Auth__ApiKey: ${ENGINE_API_KEY:-local-compose-key}
+    depends_on:
+      stub-downstream:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  stub-downstream:
+    build:
+      context: ./stub-downstream
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9090/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
